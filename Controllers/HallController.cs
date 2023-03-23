@@ -6,9 +6,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DanceStudio.Controllers
 {
-	[ApiController]
-	[Route("[controller]")]
-	public class HallController : ControllerBase
+	//[ApiController]
+	public class HallController : Controller
 	{
 		
 		private readonly ILogger<HallController> _logger;
@@ -19,18 +18,18 @@ namespace DanceStudio.Controllers
 		}
 
 		[HttpGet]
-		public IEnumerable<Models.Hall> Get()
+		public Models.Hall Get(int id)
 		{
-			return null;
+			return GetHall(id);
 		}
 
-		private IEnumerable<string> GetHalls(string id)
+		private Models.Hall GetHall(int id)
 		{
 			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
-				"SELECT * FROM Hall" +
+				"SELECT * FROM Hall " +
 				"WHERE [Id_Hall] = @paramId ";
-			List<String> result = new List<String>();
+			Hall hall = new Hall();
 			using(SqlConnection connection = new SqlConnection(connectionString))
 			{
 				SqlCommand cmd = new SqlCommand(queryString, connection);
@@ -41,7 +40,8 @@ namespace DanceStudio.Controllers
 					SqlDataReader reader = cmd.ExecuteReader();
 					while (reader.Read())
 					{
-						result.Add(reader.GetString(0));
+						hall.IdHall = reader.GetInt32(0);
+						hall.NameHall = reader.GetString(1);
 					}
 					reader.Close();
 				}
@@ -49,7 +49,7 @@ namespace DanceStudio.Controllers
 				{
 					
 				}
-				return result;
+				return hall;
 			}
 		}
 	}
