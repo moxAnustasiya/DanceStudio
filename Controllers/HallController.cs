@@ -9,8 +9,8 @@ namespace DanceStudio.Controllers
 	//[ApiController]
 	public class HallController : Controller
 	{
-		
 		private readonly ILogger<HallController> _logger;
+		private List<Hall>halls = new List<Hall>();
 
 		public HallController(ILogger<HallController> logger) 
 		{
@@ -18,30 +18,50 @@ namespace DanceStudio.Controllers
 		}
 
 		[HttpGet]
-		public Models.Hall Get(int id)
+		public List<Models.Hall> Get()
 		{
-			return GetHall(id);
+			GetHalls();
+			return halls;
 		}
 
-		private Models.Hall GetHall(int id)
+		[HttpGet]
+		public Models.Hall GetId(int id)
+		{
+			GetHalls();
+			if(halls.Count != 0)
+			{
+				foreach (Hall hall in halls)
+				{
+					if(hall.IdHall == id)
+					{
+						return hall;
+					}
+				}
+			}
+			return null;
+		}
+
+		private void GetHalls()
 		{
 			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
-				"SELECT * FROM Hall " +
-				"WHERE [Id_Hall] = @paramId ";
-			Hall hall = new Hall();
+				"SELECT * FROM Hall "; 
+				//"WHERE [Id_Hall] = @paramId ";
+			
 			using(SqlConnection connection = new SqlConnection(connectionString))
 			{
 				SqlCommand cmd = new SqlCommand(queryString, connection);
-				cmd.Parameters.AddWithValue("@paramId", id);
+				//cmd.Parameters.AddWithValue("@paramId", id);
 				try
 				{
 					connection.Open();
 					SqlDataReader reader = cmd.ExecuteReader();
 					while (reader.Read())
 					{
+						Hall hall = new Hall();
 						hall.IdHall = reader.GetInt32(0);
 						hall.NameHall = reader.GetString(1);
+						halls.Add(hall);
 					}
 					reader.Close();
 				}
@@ -49,7 +69,6 @@ namespace DanceStudio.Controllers
 				{
 					
 				}
-				return hall;
 			}
 		}
 	}
