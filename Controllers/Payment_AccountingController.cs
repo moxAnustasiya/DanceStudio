@@ -1,7 +1,9 @@
 ﻿using DanceStudio.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.Practices.EnterpriseLibrary.Data;
 using System;
+using System.Configuration;
 using System.Reflection.Metadata.Ecma335;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,11 +15,16 @@ namespace DanceStudio.Controllers
 	public class Payment_AccountingController : ControllerBase
 	{
 		private readonly ILogger<Payment_AccountingController> _logger;
+		private readonly IConfiguration Configuration;
+		private String connectionString;
 
-		public Payment_AccountingController(ILogger<Payment_AccountingController> logger)
+		public Payment_AccountingController(ILogger<Payment_AccountingController> logger, IConfiguration configuration)
 		{
 			_logger = logger;
+			this.Configuration = configuration;
+			connectionString = Configuration.GetConnectionString("defaultConnection");
 		}
+
 		// GET: api/<Payment_AccountingController>
 		[HttpGet]
 		public IEnumerable<PaymentAccount> Get()
@@ -100,7 +107,6 @@ namespace DanceStudio.Controllers
 		}
 		private List<PaymentAccount> GetPayment_Accounting()
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"SELECT * FROM Payment_Accounting ";
 			List<PaymentAccount> payment_accounting = new List<PaymentAccount>();
@@ -132,7 +138,6 @@ namespace DanceStudio.Controllers
 		}
 		private void AddPA(PaymentAccount p)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"INSERT INTO Payment_Accounting (Id_Subscription, Id_Client, Month_now, Payment) \n VALUES (@paramIdS, @paramIdC, @paramMonth, @paramP)";
 
@@ -157,7 +162,6 @@ namespace DanceStudio.Controllers
 		}
 		private void UpdatePA(PaymentAccount p, int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 			"UPDATE Payment_Accounting SET Payment = @paramP WHERE ( Id_Client = @IdCl AND Id_Subscription = @IdS AND Month_now = @Month )";
 			using (SqlConnection connection = new SqlConnection(connectionString))
@@ -181,7 +185,6 @@ namespace DanceStudio.Controllers
 		}
 		private void DeletePA(int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			string queryString = "DELETE FROM Payment_Accounting WHERE Id_Client = @paramId ";
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{

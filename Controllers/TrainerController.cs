@@ -1,7 +1,9 @@
 ﻿using DanceStudio.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.Practices.EnterpriseLibrary.Data;
 using System;
+using System.Configuration;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,10 +14,14 @@ namespace DanceStudio.Controllers
 	public class TrainerController : ControllerBase
 	{
 		private readonly ILogger<TrainerController> _logger;
+		private readonly IConfiguration Configuration;
+		private String connectionString;
 
-		public TrainerController(ILogger<TrainerController> logger)
+		public TrainerController(ILogger<TrainerController> logger, IConfiguration configuration)
 		{
 			_logger = logger;
+			this.Configuration = configuration;
+			connectionString = Configuration.GetConnectionString("defaultConnection");
 		}
 
 		// GET: api/<TrainerController>
@@ -112,7 +118,6 @@ namespace DanceStudio.Controllers
 		
 		private List<Trainer> GetTrainers()
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"SELECT * FROM Trainer ";
 			List<Trainer> trainers = new List<Trainer>();
@@ -144,7 +149,6 @@ namespace DanceStudio.Controllers
 		}
 		private void AddTrainer(Trainer trainer)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"INSERT INTO Trainer (Id_Trainer, FirstName, Dance_Style, Phone, Id_Hall) \n VALUES (@paramId, @paramName, @paramDance, @paramPhone, @paramIdHall)";
 
@@ -170,7 +174,6 @@ namespace DanceStudio.Controllers
 		}
 		private void UpdateTrainer(Trainer trainer, int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 			"UPDATE Hall SET Id_Trainer = @paramId , FirstName = @paramName, Dance_Style = @paramDance, Phone = @paramPhone, Id_Hall = @paramIdHall  WHERE Id_Trainer = @ID";
 			using (SqlConnection connection = new SqlConnection(connectionString))
@@ -196,7 +199,6 @@ namespace DanceStudio.Controllers
 		}
 		private void DeleteTrainer(int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			string queryString = "DELETE FROM Trainer WHERE Id_Trainer = @paramId ";
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{

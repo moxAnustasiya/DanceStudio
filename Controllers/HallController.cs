@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Practices.EnterpriseLibrary.Data;
 using System;
+using System.Configuration;
 
 namespace DanceStudio.Controllers
 {
@@ -12,10 +14,14 @@ namespace DanceStudio.Controllers
 	public class HallController : ControllerBase
 	{
 		private readonly ILogger<HallController> _logger;
+		private readonly IConfiguration Configuration;
+		private String connectionString;
 
-		public HallController(ILogger<HallController> logger) 
+		public HallController(ILogger<HallController> logger, IConfiguration configuration) 
 		{
 			_logger = logger;
+			this.Configuration = configuration;
+			connectionString = Configuration.GetConnectionString("defaultConnection");
 		}
 		// GET: api/<HallController>
 		[HttpGet]
@@ -116,7 +122,6 @@ namespace DanceStudio.Controllers
 
 		private List<Hall> GetHalls()
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"SELECT * FROM Hall "; 
 			List<Hall> halls = new List<Hall>();
@@ -146,7 +151,6 @@ namespace DanceStudio.Controllers
 		}
 		private void AddHall(Hall hall)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"INSERT INTO Hall (Id_Hall, Name_Hall) \n VALUES (@paramId, @paramName)";
 
@@ -169,7 +173,6 @@ namespace DanceStudio.Controllers
 		}
 		private void UpdateHall(Hall hall, int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 			"UPDATE Hall SET Id_Hall = @paramId , Name_Hall = @paramName WHERE Id_Hall = @ID";
 			using (SqlConnection connection = new SqlConnection(connectionString))
@@ -192,7 +195,6 @@ namespace DanceStudio.Controllers
 		}
 		private void DeleteHall(int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			string queryString = "DELETE FROM Hall WHERE Id_Hall = @paramId ";
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{

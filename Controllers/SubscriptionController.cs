@@ -1,7 +1,9 @@
 ﻿using DanceStudio.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.Practices.EnterpriseLibrary.Data;
 using System;
+using System.Configuration;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,10 +14,14 @@ namespace DanceStudio.Controllers
 	public class SubscriptionController : ControllerBase
 	{
 		private readonly ILogger<SubscriptionController> _logger;
+		private readonly IConfiguration Configuration;
+		private String connectionString;
 
-		public SubscriptionController(ILogger<SubscriptionController> logger)
+		public SubscriptionController(ILogger<SubscriptionController> logger, IConfiguration configuration)
 		{
 			_logger = logger;
+			this.Configuration = configuration;
+			connectionString = Configuration.GetConnectionString("defaultConnection");
 		}
 		// GET: api/<SubscriptionController>
 		[HttpGet]
@@ -111,7 +117,6 @@ namespace DanceStudio.Controllers
 		private List<Subscription> GetSubscriptions()
 		{
 			List<Subscription> subscriptions = new List<Subscription>();
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"SELECT * FROM Subscription ";
 
@@ -142,7 +147,6 @@ namespace DanceStudio.Controllers
 		}
 		private void AddSubscription(Subscription subscription)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"INSERT INTO Subscription (Id_Subscription, Price, Dance_Style) \n VALUES (@paramId, @paramPrice, @paramDance)";
 
@@ -166,7 +170,6 @@ namespace DanceStudio.Controllers
 		}
 		private void UpdateSubscription(Subscription subscription, int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 			"UPDATE Subscription SET Id_Subscription = @paramId , Price = @paramPrice, Dance_Style = @paramDance WHERE Id_Subscription = @ID";
 			using (SqlConnection connection = new SqlConnection(connectionString))
@@ -190,7 +193,6 @@ namespace DanceStudio.Controllers
 		}
 		private void DeleteSubscription(int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			string queryString = "DELETE FROM Subscription WHERE Id_Subscription = @paramId ";
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System;
+using System.Configuration;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,10 +13,14 @@ namespace DanceStudio.Controllers
 	public class ClientController : ControllerBase
 	{
 		private readonly ILogger<ClientController> _logger;
+		private readonly IConfiguration Configuration;
+		String connectionString;
 
-		public ClientController(ILogger<ClientController> logger)
+		public ClientController(ILogger<ClientController> logger, IConfiguration configuration)
 		{
 			_logger = logger;
+			this.Configuration = configuration;
+			connectionString = Configuration.GetConnectionString("defaultConnection");
 		}
 		// GET: api/<ClientController>
 		[HttpGet]
@@ -111,7 +116,6 @@ namespace DanceStudio.Controllers
 
 		private List<Client> GetClients()
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"SELECT * FROM Client ";
 			List<Client> clients = new List<Client>();
@@ -144,7 +148,6 @@ namespace DanceStudio.Controllers
 		}
 		private void AddClient(Client client)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 				"INSERT INTO Client (Id_Client, FirstName, LastName, Phone, Id_Trainer) \n VALUES (@paramId, @paramName, @paramLastName, @paramPhone, @paramIdTrainer)";
 
@@ -170,7 +173,6 @@ namespace DanceStudio.Controllers
 		}
 		private void UpdateClient(Client client, int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			String queryString =
 			"UPDATE Client SET Id_Client = @paramId , FirstName = @paramName , LastName = @paramLastName , Phone = @paramPhone , Id_Trainer = @paramIdTrainer WHERE Id_Client = @ID";
 			using (SqlConnection connection = new SqlConnection(connectionString))
@@ -196,7 +198,6 @@ namespace DanceStudio.Controllers
 		}
 		private void DeleteHall(int id)
 		{
-			String connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\Lenovo\\source\\repos\\DanceStudio\\Data Base\\DanseStudio.mdf\";Integrated Security=True";
 			string queryString = "DELETE FROM Client WHERE Id_Client = @paramId ";
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{
